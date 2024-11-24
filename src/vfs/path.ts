@@ -1,4 +1,4 @@
-import { VFS } from "./vfs";
+import { LocalFS } from "./basic";
 
 class Path {
   path: string;
