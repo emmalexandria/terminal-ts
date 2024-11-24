@@ -4,7 +4,11 @@
   "description": "A typed library offering a full suite of tools for building fake terminals in the web, from a virtual filesystem to running both real and fake commands.",
   "main": "dist/node/index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "build": "run-s clean build:ts",
+    "clean": "del dist/*",
+    "build:ts": "tsc "
   },
   "keywords": [
     "typescript",
@@ -19,9 +23,10 @@
   "author": "Emma Alexandria",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-typescript": "^12.1.1",
-    "rollup": "^4.27.4",
+    "@types/node": "^22.9.3",
+    "del-cli": "^6.0.0",
+    "happy-dom": "^15.11.6",
+    "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2",
     "vitest": "^2.1.5"
   }
