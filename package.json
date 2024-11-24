@@ -1,0 +1,28 @@
+{
+  "name": "terminal-ts",
+  "version": "1.0.0",
+  "description": "A typed library offering a full suite of tools for building fake terminals in the web, from a virtual filesystem to running both real and fake commands.",
+  "main": "dist/node/index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [
+    "typescript",
+    "terminal",
+    "node",
+    "browser",
+    "tools",
+    "fake-terminal",
+    "cli",
+    "tui"
+  ],
+  "author": "Emma Alexandria",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "rollup": "^4.27.4",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.5"
+  }
+}
