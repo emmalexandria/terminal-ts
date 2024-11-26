@@ -1,5 +1,4 @@
 /** Incredibly limited and simple implementation of a file system for use by the terminal */
-export * from "./basic"
 
-
+export * from "./fs.js"
 
