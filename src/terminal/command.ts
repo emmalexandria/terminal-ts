@@ -1,12 +1,9 @@
-import { Terminal } from "./terminal.js";
+import { Vfs } from "vfs"
+import { OutputCallback } from "./terminal"
 
-
-export type CommandFunction = (term: Terminal) => Promise<void>
+export type CommandType = "synchronous" | "continuous"
 
 export interface Command {
-  name: string;
-  run: CommandFunction
+  name: string
+  run: (vfs: Vfs, outputCallback: OutputCallback) => void
 }
-
-
-

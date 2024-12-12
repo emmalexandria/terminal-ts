@@ -1,10 +1,10 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     environmentMatchGlobs: [
-      ['**\/*.dom.test.ts', 'happy-dom'],
-      ['**\/*.test.ts', 'node']
-    ]
-  }
-})
+      ["**\/*.dom.test.ts", "happy-dom"],
+      ["**\/*.test.ts", "node"],
+    ],
+  },
+});
