@@ -1,9 +1,9 @@
-import { Vfs } from "vfs"
-import { OutputCallback } from "./terminal"
+import { OutputCallback, Terminal } from "./terminal.js"
 
 export type CommandType = "synchronous" | "continuous"
 
 export interface Command {
   name: string
-  run: (vfs: Vfs, outputCallback: OutputCallback) => void
+  type: CommandType
+  run: (terminal: Terminal) => void
 }

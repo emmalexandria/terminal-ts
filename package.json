@@ -3,25 +3,22 @@
   "version": "1.0.1",
   "description": "A typed library offering a full suite of tools for building fake terminals in the web, from a virtual filesystem to running both real and fake commands.",
   "main": "dist/node/index.js",
-  "type": "module",
   "scripts": {
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "build": "run-s clean build:ts",
     "lint": "eslint .",
     "format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json)'",
-    "clean": "del dist/*",
-    "build:ts": "tsup",
+    "build": "tsup",
     "build:watch": "tsup --watch"
   },
   "exports": {
     ".": {
-      "require": "./dist/index,cjs",
-      "import": "./dist/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     },
     "./server": {
-      "require": "./dist/server.cjs",
-      "import": "./dist/server.js"
+      "require": "./dist/server.js",
+      "import": "./dist/server.mjs"
     }
   },
   "keywords": [

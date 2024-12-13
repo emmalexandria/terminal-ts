@@ -7,11 +7,12 @@ import {
 } from "vfs/vfs.js";
 import path, { relative } from "path";
 import fs, { Dirent, Stats } from "fs";
+import { Fs } from "../fs.js";
 
-export const buildVFS = async (root: string): Promise<VirtualDirectory> => {
+export const buildVFS = async (root: string): Promise<Fs> => {
   const VFS = await walkDir(path.resolve(root));
   makeDirectoryRelative(VFS);
-  return VFS;
+  return new Fs(VFS);
 };
 
 const walkDir = async (dir: string): Promise<VirtualDirectory> => {

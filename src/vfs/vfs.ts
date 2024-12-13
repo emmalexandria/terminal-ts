@@ -43,6 +43,11 @@ export interface VirtualSymlink extends FSEntry {
   target: string;
 }
 
+/// Represents a path through the path of children one must go through to access the file
+export interface VirtualPath {
+  path: number[]
+}
+
 export const FSRoot: VirtualDirectory = {
   name: "",
   path: "/",
@@ -56,13 +61,4 @@ export const FSRoot: VirtualDirectory = {
   entries: {},
 };
 
-export class Vfs {
-  root: VirtualDirectory
-  cwd: VirtualDirectory
 
-  constructor(root: VirtualDirectory) {
-    this.root = root
-    this.cwd = root
-  }
-
-}
