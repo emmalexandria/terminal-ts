@@ -8,39 +8,26 @@ interface Timestamps {
   accessedAt: Timestamp;
 }
 
-export type FileType = "file" | "directory" | "symlink";
 
 export type ServerEntry = {
   serverPath?: string;
 };
 
+export type EntryType = "directory" | "file";
+
 export interface EntryChildren {
-  [key: string]: VirtualFile | VirtualDirectory | VirtualSymlink;
+  [key: string]: VfsEntry;
 }
 
-export interface FSEntry {
+export interface VfsEntry {
   name: string;
+  type: EntryType;
   path: string;
-  type: FileType;
   size: number;
   times: Timestamps;
   serverEntry?: ServerEntry;
-}
-
-export interface VirtualFile extends FSEntry {
-  type: "file";
-  content: Uint8Array | null;
-  encoding?: BufferEncoding;
-}
-
-export interface VirtualDirectory extends FSEntry {
-  type: "directory";
-  entries: EntryChildren;
-}
-
-export interface VirtualSymlink extends FSEntry {
-  type: "symlink";
-  target: string;
+  entries?: EntryChildren
+  fileContent?: Buffer
 }
 
 /// Represents a path through the path of children one must go through to access the file
@@ -48,7 +35,7 @@ export interface VirtualPath {
   path: number[]
 }
 
-export const FSRoot: VirtualDirectory = {
+export const FSRoot: VfsEntry = {
   name: "",
   path: "/",
   type: "directory",

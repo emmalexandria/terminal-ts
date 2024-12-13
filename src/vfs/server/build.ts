@@ -1,32 +1,29 @@
 import {
-  FileType,
-  FSEntry,
-  VirtualDirectory,
-  VirtualFile,
-  VirtualSymlink,
+  EntryType,
+  VfsEntry,
 } from "vfs/vfs.js";
 import path, { relative } from "path";
 import fs, { Dirent, Stats } from "fs";
-import { Fs } from "../fs.js";
+import { FsError, Vfs } from "../fs.js";
 
-export const buildVFS = async (root: string): Promise<Fs> => {
+export const buildVFS = async (root: string): Promise<Vfs> => {
   const VFS = await walkDir(path.resolve(root));
   makeDirectoryRelative(VFS);
-  return new Fs(VFS);
+  return new Vfs(VFS);
 };
 
-const walkDir = async (dir: string): Promise<VirtualDirectory> => {
+const walkDir = async (dir: string): Promise<VfsEntry> => {
   const root = await vfsDirectoryFromPath(dir);
   const entries = await fs.promises.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
+    if (entry.isDirectory() && root.entries) {
       root.entries[entry.name] = await walkDir(fullPath);
       continue;
     }
 
     const stat = await fs.promises.stat(fullPath);
-    const fsEntry: FSEntry = {
+    const fsEntry: VfsEntry = {
       name: entry.name,
       path: entry.parentPath,
       type: getFileType(entry),
@@ -38,28 +35,25 @@ const walkDir = async (dir: string): Promise<VirtualDirectory> => {
       },
     };
     if (fsEntry.type == "file") {
-      const file: VirtualFile = {
+      const file: VfsEntry = {
         ...fsEntry,
-        content: await fs.promises.readFile(fullPath),
+        fileContent: await fs.promises.readFile(fullPath),
         type: "file",
       };
-      root.entries[entry.name] = file;
-    }
-    if (fsEntry.type == "symlink") {
-      const symlink: VirtualSymlink = {
-        ...fsEntry,
-        target: await fs.promises.readlink(fullPath),
-        type: "symlink",
-      };
-      root.entries[entry.name] = symlink;
+      if (root.entries) {
+        root.entries[entry.name] = file;
+      }
     }
   }
   return root;
 };
 
-const makeDirectoryRelative = (dir: VirtualDirectory) => {
+const makeDirectoryRelative = (dir: VfsEntry) => {
   dir.path = ".";
-  const makeChildrenRelative = (currentDir: VirtualDirectory) => {
+  const makeChildrenRelative = (currentDir: VfsEntry) => {
+    if (!currentDir.entries) {
+      return new FsError("Entry is not directory")
+    }
     for (const key of Object.keys(currentDir.entries)) {
       currentDir.entries[key].path = path.relative(
         currentDir.path,
@@ -73,9 +67,9 @@ const makeDirectoryRelative = (dir: VirtualDirectory) => {
 
 export const vfsDirectoryFromPath = async (
   fullPath: string,
-): Promise<VirtualDirectory> => {
+): Promise<VfsEntry> => {
   const stat = await fs.promises.stat(fullPath);
-  const fileEntry: VirtualDirectory = {
+  const fileEntry: VfsEntry = {
     name: path.basename(fullPath),
     path: path.dirname(fullPath),
     type: "directory",
@@ -90,15 +84,13 @@ export const vfsDirectoryFromPath = async (
   return fileEntry;
 };
 
-const getFileType = (file: Dirent | Stats): FileType => {
+const getFileType = (file: Dirent | Stats): EntryType => {
   if (file.isDirectory()) {
     return "directory";
   }
   if (file.isFile()) {
     return "file";
   }
-  if (file.isSymbolicLink()) {
-    return "symlink";
-  }
+
   return "file";
 };

@@ -1,4 +1,4 @@
-import { VirtualPath, VirtualDirectory, EntryChildren, FSEntry } from "./vfs"
+import { VirtualPath, EntryChildren, VfsEntry } from "./vfs"
 import path from "path-browserify"
 
 export class FsError extends Error {
@@ -9,12 +9,12 @@ export class FsError extends Error {
 }
 
 export class Vfs {
-  root: VirtualDirectory
-  cwd: VirtualPath
+  root: VfsEntry
+  wd: VirtualPath
 
-  constructor(root: VirtualDirectory) {
+  constructor(root: VfsEntry) {
     this.root = root
-    this.cwd = {
+    this.wd = {
       path: []
     }
   }
@@ -22,36 +22,38 @@ export class Vfs {
   cwd(cdPath: string): FsError | void {
     const normalized = path.normalize(cdPath)
     const segments = normalized.split("/")
-    let currentDirectory: VirtualDirectory = this.getCwd()
+    let currentDirectory: VfsEntry = this.getWd()
 
     segments.forEach((segment) => {
-      const entry = Object.entries(currentDirectory.entries).find((val) => val[0] === segment);
-      if (entry && entry.) {
+      if (!currentDirectory.entries) {
+        return new FsError("Invalid path")
       }
-    })
 
+      const entry = Object.keys(currentDirectory.entries).findIndex((val) => {
+        return val === segment
+      });
+
+      if (!entry) {
+        return new FsError("Invalid path")
+      }
+
+      this.wd.path.push(entry)
+    })
   }
 
-  getWd(): VirtualDirectory {
-    let currentDirectory: EntryChildren = { ".": this.root }
-    this.cwd.path.forEach((idx) => {
-      const currentEntry = Object.entries(currentDirectory)[0]
+  getWd(): VfsEntry {
+    let currentDirectory: VfsEntry = this.root
+
+    for (let idx of this.wd.path) {
+      if (!currentDirectory.entries) {
+        throw new FsError("Invalid working directory state")
+      }
+
       const childArray = Array.from(Object.values(currentDirectory.entries))
-      if (childArray.length < idx) {
-        throw new FsError("Invalid path for cwd")
-      }
       currentDirectory = childArray[idx]
-    })
+    }
 
-    return Object.values(currentDirectory)[0] as VirtualDirectory
-  }
-
-  readFile() {
-
-  }
-
-  readDirectory(): FSEntry[] {
-
+    return currentDirectory
   }
 }
 

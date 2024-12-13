@@ -2,15 +2,15 @@ import { test, expect } from "vitest"
 import { buildVFS } from "./server/build.js"
 
 
-test("Get CWD", async () => {
+test("Get working directory", async () => {
   const Fs = await buildVFS("src/vfs")
 
-  expect(Fs.getCwd()).toEqual(Fs.root)
+  expect(Fs.getWd()).toEqual(Fs.root)
 })
 
-test("CD into directory", async () => {
+test("Change working directory", async () => {
   const Fs = await buildVFS("src/vfs")
-  Fs.cd("server")
+  Fs.cwd("server")
 
-  expect(Fs.getCwd()).toEqual(Fs.root.entries["server"])
+  expect(Fs.getWd()).toEqual(Fs.root.entries?.server)
 })
