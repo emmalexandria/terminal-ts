@@ -63,14 +63,11 @@ export class Terminal {
   }
 
   print(input: string) {
-    const output = {
-      text: input,
-      fg: OutputColor.DEFAULT,
-      bg: OutputColor.DEFAULT,
-      attributes: [],
-    };
-    this.lines.push([output]);
-    this.outputCallback(renderTerminalText(output));
+    const lines = input.split('\n');
+    lines.forEach((l) => {
+      this.lines.push([makeDefaultText(l)])
+      this.outputCallback(renderTerminalText(makeDefaultText(l)));
+    })
     this.promptUpdateCallback({ vfs: this.vfs });
   }
 
@@ -102,8 +99,23 @@ export class Terminal {
   }
 
   _runcommand(command: Command, args: string[]) {
-    command.run(this, args);
+    try {
+      command.run(this, args);
+    } catch (e) {
+      const error = e as Error;
+      this.printColored({ text: error.message, fg: OutputColor.RED, bg: OutputColor.DEFAULT, attributes: [] })
+    }
   }
+}
+
+function makeDefaultText(input: string): TerminalText {
+  const output = {
+    text: input,
+    fg: OutputColor.DEFAULT,
+    bg: OutputColor.DEFAULT,
+    attributes: [],
+  };
+  return output;
 }
 
 export function renderTerminalText(text: TerminalText): HTMLParagraphElement {

@@ -26,7 +26,7 @@ export interface VfsEntry {
   times: Timestamps;
   serverEntry?: ServerEntry;
   entries?: EntryChildren;
-  fileContent?: Buffer;
+  fileContent?: string;
 }
 
 /// Represents a path through the path of children one must go through to access the file
@@ -105,5 +105,33 @@ export class Vfs {
     }
 
     return currentDirectory;
+  }
+
+  readFile(name: string): string {
+    const file = this._resolvePath(name)
+    if (!file) {
+      throw new VfsError("File does not exist")
+    }
+    if (!file.fileContent) {
+      throw new VfsError("File has no content")
+    }
+    return atob(file.fileContent);
+  }
+
+  _resolvePath(inputPath: string): VfsEntry | undefined {
+    const normalized = path.normalize(inputPath).split("/");
+    const oldWd = this.wd;
+    if (normalized.length > 1) {
+      normalized.slice(1).forEach((s) => {
+        this.cwd(s)
+      })
+    }
+    const wd = this.getWd()
+    if (wd.entries) {
+      const path = normalized[normalized.length - 1]
+      return wd.entries[path]
+    }
+
+    this.wd = oldWd;
   }
 }

@@ -34,7 +34,7 @@ const walkDir = async (dir: string): Promise<VfsEntry> => {
     if (fsEntry.type == "file") {
       const file: VfsEntry = {
         ...fsEntry,
-        fileContent: await fs.promises.readFile(fullPath),
+        fileContent: await fs.promises.readFile(fullPath).then((b) => b.toString('base64')),
         type: "file",
       };
       if (root.entries) {

@@ -25,7 +25,6 @@ function handleSpecialKeys(
 ): boolean {
   switch (ev.key) {
     case "Enter":
-      console.log("Hello");
       if (input.textContent) {
         terminal.input(input.textContent);
       }

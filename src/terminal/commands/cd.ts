@@ -2,6 +2,7 @@ import { Command } from "../command.js";
 
 export const Cd: Command = {
   name: "cd",
+  description: "Change the current working directory",
   type: "synchronous",
   run: (t, a) => {
     try {
