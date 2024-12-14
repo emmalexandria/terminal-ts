@@ -64,11 +64,17 @@ export enum Attribute {
   BLINKING = "blink",
 }
 
+export interface TerminalLink {
+  href: string,
+  target: "_blank" | "_self"
+}
+
 export interface TerminalText {
   text: string;
   fg: Color;
   bg: Color;
   attributes: Attribute[];
+  link?: TerminalLink
 }
 
 export type OutputCallback = (line: HTMLSpanElement) => void;
@@ -207,18 +213,25 @@ export function renderTerminalTextLine(text: TerminalText[]): HTMLSpanElement {
   return span
 }
 
-function renderTerminalText(text: TerminalText): HTMLParagraphElement {
-  const paragraph: HTMLParagraphElement = document.createElement("p");
-  paragraph.style.display = "inline-block";
-  paragraph.style.margin = "0";
-  paragraph.style.whiteSpace = "pre-wrap";
-  paragraph.textContent = text.text;
-  colorElement(text.fg, paragraph, false)
-  colorElement(text.bg, paragraph, true)
+function renderTerminalText(text: TerminalText): HTMLParagraphElement | HTMLAnchorElement {
+  let element: HTMLParagraphElement | HTMLAnchorElement;
+  if (text.link) {
+    element = document.createElement("a") as HTMLAnchorElement;
+    element.href = text.link.href;
+    element.target = text.link.target;
+  } else {
+    element = document.createElement("p") as HTMLParagraphElement
+  }
+  element.style.display = "inline-block";
+  element.style.margin = "0";
+  element.style.whiteSpace = "pre-wrap";
+  element.textContent = text.text;
+  colorElement(text.fg, element, false)
+  colorElement(text.bg, element, true)
   text.attributes.forEach((a) => {
-    paragraph.classList.add(a);
+    element.classList.add(a);
   });
-  return paragraph;
+  return element;
 }
 
 function colorElement(color: Color, el: HTMLElement, background?: boolean) {
