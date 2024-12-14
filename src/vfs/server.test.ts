@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { buildVfsRoot, makeDirectoryRelative } from "./server";
+import { makeDirectoryRelative } from "./server";
 import { VfsEntry } from "./vfs";
 
 test("Make directory paths relative", async () => {

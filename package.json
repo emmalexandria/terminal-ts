@@ -12,13 +12,14 @@
     "build:watch": "tsup --watch"
   },
   "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+    "./terminal.css": "./dist/terminal.css",
+    "./vfs": {
+      "require": "./dist/vfs.js",
+      "import": "./dist/vfs.mjs"
     },
-    "./server": {
-      "require": "./dist/server.js",
-      "import": "./dist/server.mjs"
+    "./terminal": {
+      "require": "./dist/terminal.js",
+      "import": "./dist/terminal.mjs"
     },
     "./handlers": {
       "require": "./dist/handlers.js",

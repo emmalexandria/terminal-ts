@@ -1,0 +1,173 @@
+:root {
+  --foreground: #C0C0C0;
+  --background: #1d1f21;
+  --black: #282a2e;
+  --bright-black: #373b41;
+  --red: #a54242;
+  --bright-red: #cc6666;
+  --green: #8c9440;
+  --bright-green: #b5bd68;
+  --yellow: #de935f;
+  --bright-yellow: #f0c674;
+  --blue: #5f819d;
+  --bright-blue: #81a2be;
+  --magenta: #85678f;
+  --bright-magenta: #b294bb;
+  --cyan: #5e8d87;
+  --bright-cyan: #8abeb7;
+  --white: #707880;
+  --bright-white: #c5c8c6;
+}
+
+.fgdefault {
+  color: var(--foreground);
+}
+
+::selection {
+  background-color: var(--bright-white);
+  color: var(--black);
+}
+
+.terminal-line {
+  margin: 0.25rem 0;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.terminal-line p {
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.bgdefualt {
+  color: transparent;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.fg-default {
+  color: var(--foreground);
+}
+
+.bg-default {
+  background-color: var(--background);
+}
+
+.fg-white {
+  color: var(--white)
+}
+
+.fg-black {
+  color: var(--black);
+}
+
+.fg-bright-black {
+  color: var(--bright-black);
+}
+
+.fg-red {
+  color: var(--red);
+}
+
+.fg-bright-red {
+  color: var(--bright-red);
+}
+
+.fg-green {
+  color: var(--green);
+}
+
+.fg-bright-green {
+  color: var(--bright-green);
+}
+
+.fg-blue {
+  color: var(--blue);
+}
+
+.fg-bright-blue {
+  color: var(--bright-blue);
+}
+
+.fg-magenta {
+  color: var(--magenta);
+}
+
+.fg-bright-magenta {
+  color: var(--bright-magenta);
+}
+
+.fg-cyan {
+  color: var(--cyan);
+}
+
+.fg-bright-cyan {
+  color: var(--bright-cyan);
+}
+
+.fg-white {
+  color: var(--white);
+}
+
+.fg-bright-white {
+  color: var(--bright-white);
+}
+
+.bg-black {
+  background-color: var(--black);
+}
+
+.bg-bright-black {
+  background-color: var(--bright-black);
+}
+
+.bg-red {
+  background-color: var(--red);
+}
+
+.bg-bright-red {
+  background-color: var(--bright-red);
+}
+
+.bg-green {
+  background-color: var(--green);
+}
+
+.bg-bright-green {
+  background-color: var(--bright-green);
+}
+
+.bg-blue {
+  background-color: var(--blue);
+}
+
+.bg-bright-blue {
+  background-color: var(--bright-blue);
+}
+
+.bg-magenta {
+  background-color: var(--magenta);
+}
+
+.bg-bright-magenta {
+  background-color: var(--bright-magenta);
+}
+
+.bg-cyan {
+  background-color: var(--cyan);
+}
+
+.bg-bright-cyan {
+  background-color: var(--bright-cyan);
+}
+
+.bg-white {
+  background-color: var(--white);
+}
+
+.bg-bright-white {
+  background-color: var(--bright-white);
+}

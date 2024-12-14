@@ -3,8 +3,8 @@ import { defineConfig } from "tsup";
 export default defineConfig([
   {
     entry: [
-      "src/index.ts",
-      "src/server.ts",
+      "src/terminal.ts",
+      "src/vfs.ts",
       "src/commands.ts",
       "src/handlers.ts",
     ],

@@ -2,7 +2,34 @@ import { Command } from "./command.js";
 import { Vfs } from "../vfs/vfs.js";
 import { HelpStartup } from "./commands/help.js";
 
-export enum OutputColor {
+export interface ColorInterface {
+  ansi16?: Ansi16,
+  rgb?: Rgb
+}
+
+export class Color {
+  ansi16?: Ansi16
+  rgb?: Rgb
+
+  constructor(color?: ColorInterface) {
+    if (!color) {
+      this.ansi16 = Ansi16.DEFAULT
+      return
+    }
+    let { ansi16, rgb } = color
+    if (rgb) {
+      this.rgb = rgb
+      return
+    }
+    if (ansi16) {
+      this.ansi16 = ansi16
+      return
+    }
+    this.ansi16 = Ansi16.DEFAULT
+  }
+}
+
+export enum Ansi16 {
   BLACK = "black",
   BRIGHTBLACK = "bright-black",
   WHITE = "white",
@@ -22,7 +49,14 @@ export enum OutputColor {
   DEFAULT = "default",
 }
 
-export enum OutputAttributes {
+export interface Rgb {
+  r: number,
+  g: number,
+  b: number
+}
+
+
+export enum Attribute {
   BOLD = "bold",
   ITALIC = "italic",
   DIM = "dim",
@@ -32,9 +66,9 @@ export enum OutputAttributes {
 
 export interface TerminalText {
   text: string;
-  fg: OutputColor;
-  bg: OutputColor;
-  attributes: OutputAttributes[];
+  fg: Color;
+  bg: Color;
+  attributes: Attribute[];
 }
 
 export type OutputCallback = (line: HTMLSpanElement) => void;
@@ -44,8 +78,8 @@ export type PromptContentCallback = () => string;
 
 interface PromptUpdate {
   currentCommand?: string;
-  vfs: Vfs;
-  lastCommandSuccess?: string;
+  vfs?: Vfs;
+  lastCommandSuccess?: boolean;
 }
 
 export class Terminal {
@@ -110,8 +144,8 @@ export class Terminal {
     } else {
       this.printColoredLine({
         text: `No command found for ${input}`,
-        fg: OutputColor.RED,
-        bg: OutputColor.DEFAULT,
+        fg: new Color({ ansi16: Ansi16.RED }),
+        bg: new Color(),
         attributes: [],
       });
     }
@@ -122,26 +156,37 @@ export class Terminal {
       command.run(this, args);
     } catch (e) {
       const error = e as Error;
-      this.printColoredLine({ text: error.message, fg: OutputColor.RED, bg: OutputColor.DEFAULT, attributes: [] })
+      this.printColoredLine(createTerminalText(error.message, new Color({ ansi16: Ansi16.RED })))
+      this.promptUpdateCallback({ lastCommandSuccess: false })
     }
+    this.promptUpdateCallback({ lastCommandSuccess: true })
   }
 }
 
 function makeDefaultText(input: string): TerminalText {
   const output = {
     text: input,
-    fg: OutputColor.DEFAULT,
-    bg: OutputColor.DEFAULT,
+    fg: new Color(),
+    bg: new Color(),
     attributes: [],
   };
   return output;
+}
+
+export function createTerminalText(text: string, fg?: Color, bg?: Color, attributes?: Attribute[]): TerminalText {
+  return {
+    text,
+    fg: fg ?? new Color(),
+    bg: bg ?? new Color(),
+    attributes: attributes ?? []
+  }
 }
 
 export function renderTerminalTextLine(text: TerminalText[]): HTMLSpanElement {
   const span: HTMLSpanElement = document.createElement("span");
   span.style.display = "block";
   span.classList.add("terminal-line")
-  span.style.whiteSpace = "pre";
+  span.style.whiteSpace = "pre-wrap";
   text.forEach((t) => {
     const paragraph = renderTerminalText(t);
     span.appendChild(paragraph)
@@ -154,18 +199,35 @@ function renderTerminalText(text: TerminalText): HTMLParagraphElement {
   const paragraph: HTMLParagraphElement = document.createElement("p");
   paragraph.style.display = "inline-block";
   paragraph.style.margin = "0";
-  paragraph.style.whiteSpace = "pre";
+  paragraph.style.whiteSpace = "pre-wrap";
   paragraph.textContent = text.text;
-  paragraph.classList.add(colorToClassName(text.fg, false));
-  paragraph.classList.add(colorToClassName(text.bg, true));
+  colorElement(text.fg, paragraph, false)
+  colorElement(text.bg, paragraph, true)
   text.attributes.forEach((a) => {
     paragraph.classList.add(a);
   });
   return paragraph;
-
 }
 
-function colorToClassName(color: OutputColor, background?: boolean): string {
+function colorElement(color: Color, el: HTMLElement, background?: boolean) {
+  if (!background) {
+    background = false
+  }
+  if (color.rgb) {
+    const colorString = `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`
+    if (background) {
+      el.style.backgroundColor = colorString;
+    } else {
+      el.style.color = colorString;
+    }
+    return
+  }
+  if (color.ansi16) {
+    el.classList.add(colorToClassName(color.ansi16, background))
+  }
+}
+
+function colorToClassName(color: Ansi16, background?: boolean): string {
   if (!background) {
     background = false;
   }

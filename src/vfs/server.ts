@@ -3,7 +3,7 @@ import path, { relative } from "path";
 import fs, { Dirent, Stats } from "fs";
 import { VfsError, Vfs } from "./vfs.js";
 
-export const buildVfsRoot = async (root: string): Promise<VfsEntry> => {
+export const serverBuildVfsRoot = async (root: string): Promise<VfsEntry> => {
   const VFS = await walkDir(path.resolve(root));
   makeDirectoryRelative(VFS);
   return VFS;
