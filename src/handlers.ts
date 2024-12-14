@@ -1,1 +1,1 @@
-export * from "./terminal/handlers/index.js";
+export { keyboardInputHandler } from "./terminal/handlers/input.js";

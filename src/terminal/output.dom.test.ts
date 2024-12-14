@@ -1,5 +1,5 @@
 import { test, expect } from "vitest"
-import { Ansi16, Attribute, Color, renderTerminalText } from "./terminal.js";
+import { Color, Ansi, Attribute, renderTerminalText, TerminalText } from "./output.js"
 
 test("Test basic rendering", () => {
   const text = "Hello"
@@ -10,7 +10,7 @@ test("Test basic rendering", () => {
   expected.textContent = text;
   expected.classList.add("fg-red bg-bright-green bold")
 
-  const rendered = renderTerminalText({ text: text, fg: new Color({ ansi16: Ansi16.RED }), bg: new Color({ ansi16: Ansi16.BRIGHTGREEN }), attributes: [Attribute.BOLD] })
+  const rendered = renderTerminalText({ text: text, fg: new Color({ ansi16: Ansi.RED }), bg: new Color({ ansi16: Ansi.BRIGHTGREEN }), attributes: [Attribute.BOLD] })
   expect(rendered).toEqual(expected)
 })
 
@@ -26,7 +26,7 @@ test("Test link rendering", () => {
   expected.classList.add("fg-red bg-bright-green bold")
 
   const rendered = renderTerminalText({
-    text: text, fg: new Color({ ansi16: Ansi16.RED }), bg: new Color({ ansi16: Ansi16.BRIGHTGREEN }), attributes: [Attribute.BOLD], link: {
+    text: text, fg: new Color({ ansi16: Ansi.RED }), bg: new Color({ ansi16: Ansi.BRIGHTGREEN }), attributes: [Attribute.BOLD], link: {
       href: "/hello",
       target: "_blank"
     }
