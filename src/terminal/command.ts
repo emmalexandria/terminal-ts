@@ -5,5 +5,5 @@ export type CommandType = "synchronous" | "continuous"
 export interface Command {
   name: string
   type: CommandType
-  run: (terminal: Terminal) => void
+  run: (terminal: Terminal, args: string[]) => void
 }

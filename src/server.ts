@@ -1,1 +1,1 @@
-export * from "vfs/server/build.js"
+export * from "vfs/server.js"
