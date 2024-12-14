@@ -1,7 +1,7 @@
 import { Command } from "./command.js";
 import { Vfs } from "../vfs/vfs.js";
 import { HelpStartup } from "./commands/help.js";
-import { Ansi, Attribute, Color, renderTerminalTextLine, TerminalText } from "./output.js";
+import { Ansi, Attribute, Color, createTerminalText, makeDefaultText, renderTerminalTextLine, TerminalText } from "./output.js";
 
 export type OutputCallback = (line: HTMLSpanElement) => void;
 
@@ -105,30 +105,6 @@ export class Terminal {
     this.promptUpdateCallback({ lastCommandSuccess: true });
     return true;
   }
-}
-
-function makeDefaultText(input: string): TerminalText {
-  const output = {
-    text: input,
-    fg: new Color(),
-    bg: new Color(),
-    attributes: [],
-  };
-  return output;
-}
-
-export function createTerminalText(
-  text: string,
-  fg?: Color,
-  bg?: Color,
-  attributes?: Attribute[],
-): TerminalText {
-  return {
-    text,
-    fg: fg ?? new Color(),
-    bg: bg ?? new Color(),
-    attributes: attributes ?? [],
-  };
 }
 
 

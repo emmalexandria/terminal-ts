@@ -134,4 +134,28 @@ function colorToClassName(color: Ansi, background?: boolean): string {
   return retColor;
 }
 
+export function makeDefaultText(input: string): TerminalText {
+  const output = {
+    text: input,
+    fg: new Color(),
+    bg: new Color(),
+    attributes: [],
+  };
+  return output;
+}
+
+export function createTerminalText(
+  text: string,
+  fg?: Color,
+  bg?: Color,
+  attributes?: Attribute[],
+): TerminalText {
+  return {
+    text,
+    fg: fg ?? new Color(),
+    bg: bg ?? new Color(),
+    attributes: attributes ?? [],
+  };
+}
+
 

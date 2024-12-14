@@ -1,7 +1,6 @@
 {
   "name": "terminal-ts",
   "version": "1.0.5",
-  "type": "module",
   "description": "A typed library offering a full suite of tools for building fake terminals in the web, from a virtual filesystem to running both real and fake commands.",
   "scripts": {
     "test": "vitest",
