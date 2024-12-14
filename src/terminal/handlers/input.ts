@@ -1,21 +1,52 @@
 import { Terminal } from "terminal/terminal";
 import { getCursorPosition, setCursorPosition } from "./util";
+import { boolUndefinedDefault } from "./util.js";
+
+interface Binding {
+  key: string,
+  altKey?: boolean,
+  ctrlKey?: boolean,
+  shiftKey?: boolean,
+  metaKey?: boolean,
+  action: (t: Terminal, input: HTMLElement, ev: KeyboardEvent) => void
+}
+
+const bindings: Binding[] = [
+  {
+    key: "Enter",
+    action: (t, input, ev) => {
+      if (input.textContent) {
+        t.input(input.textContent);
+      }
+      input.textContent = "";
+      setCursorPosition(input, 0);
+      return true;
+
+    }
+  },
+]
 
 export function keyboardInputHandler(
   ev: KeyboardEvent,
   terminal: Terminal,
   input: HTMLElement,
 ) {
-  ev.preventDefault();
-  if (!handleSpecialKeys(ev, terminal, input)) {
-    input.textContent += ev.key;
-    let position = getCursorPosition(input);
-    if (!position) {
-      position = 0;
-    }
+  handleSpecialKeys(ev, terminal, input)
+}
 
-    setCursorPosition(input, position + 1);
+function matchBinding(ev: KeyboardEvent, b: Binding): boolean {
+  //This is ugly but it leads to a nice API for bindings so tis fine
+  if (matchModifier(b.altKey, ev.altKey) && matchModifier(b.ctrlKey, ev.ctrlKey) && matchModifier(b.metaKey, ev.metaKey) && matchModifier(b.shiftKey, ev.shiftKey)) {
+    if (b.key == ev.key) {
+      return true
+    }
   }
+
+  return false
+}
+
+function matchModifier(b: boolean | undefined, ev: boolean): boolean {
+  return boolUndefinedDefault(b) == ev
 }
 
 function handleSpecialKeys(
@@ -23,16 +54,14 @@ function handleSpecialKeys(
   terminal: Terminal,
   input: HTMLElement,
 ): boolean {
-  switch (ev.key) {
-    case "Enter":
-      if (input.textContent) {
-        terminal.input(input.textContent);
-      }
-      input.textContent = "";
-      setCursorPosition(input, 0);
+  for (let b of bindings) {
+    if (matchBinding(ev, b)) {
+      ev.preventDefault()
+      b.action(terminal, input, ev)
       return true;
-      break;
-  }
 
-  return false;
+    }
+  }
+  return false
 }
+

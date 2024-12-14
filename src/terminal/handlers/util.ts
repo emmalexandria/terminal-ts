@@ -26,3 +26,10 @@ export const setCursorPosition = (el: HTMLElement, position: number) => {
   selection?.removeAllRanges();
   selection?.addRange(range);
 };
+
+export function boolUndefinedDefault(b: boolean | undefined): boolean {
+  if (!b) {
+    b = false;
+  }
+  return b;
+}

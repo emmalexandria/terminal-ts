@@ -77,6 +77,7 @@ export type PromptUpdateCallback = (update: PromptUpdate) => void;
 export type PromptContentCallback = () => string;
 
 interface PromptUpdate {
+  content?: string
   currentCommand?: string;
   vfs?: Vfs;
   lastCommandSuccess?: boolean;
@@ -85,6 +86,8 @@ interface PromptUpdate {
 export class Terminal {
   commands: Command[];
   startupCommand?: Command;
+  history: string[];
+  historyIdx: number
   vfs: Vfs;
   outputCallback: OutputCallback;
   promptUpdateCallback: PromptUpdateCallback;
@@ -102,6 +105,8 @@ export class Terminal {
     this.promptUpdateCallback = promptCallback;
     this.promptContentCallback = promptContentCallback;
     this.vfs = vfs;
+    this.history = [];
+    this.historyIdx = -1;
     this.commands = [];
     this.lines = [];
     if (!startupCommand) {
@@ -135,7 +140,10 @@ export class Terminal {
     const command = this.commands.find((c) => c.name == parts[0]);
     if (command) {
       this.print(this.promptContentCallback());
-      this._runcommand(command, parts.slice(1));
+      const result = this._runcommand(command, parts.slice(1));
+      if (result) {
+        this.history.push(input)
+      }
       this.promptUpdateCallback({
         vfs: this.vfs,
         currentCommand: command.name,
@@ -149,17 +157,21 @@ export class Terminal {
         attributes: [],
       });
     }
+
+
   }
 
-  _runcommand(command: Command, args: string[]) {
+  _runcommand(command: Command, args: string[]): boolean {
     try {
       command.run(this, args);
     } catch (e) {
       const error = e as Error;
       this.printColoredLine(createTerminalText(error.message, new Color({ ansi16: Ansi16.RED })))
       this.promptUpdateCallback({ lastCommandSuccess: false })
+      return false
     }
     this.promptUpdateCallback({ lastCommandSuccess: true })
+    return true
   }
 }
 
