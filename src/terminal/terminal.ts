@@ -121,6 +121,6 @@ function colorToClassName(color: OutputColor, background?: boolean): string {
   if (!background) {
     background = false;
   }
-  let retColor: string = `${background ? "bg" : "fg"}${color}`;
+  const retColor: string = `${background ? "bg" : "fg"}${color}`;
   return retColor;
 }

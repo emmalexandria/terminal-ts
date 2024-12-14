@@ -64,7 +64,7 @@ export class Vfs {
   cwd(cdPath: string): VfsError | void {
     const normalized = path.normalize(cdPath);
     const segments = normalized.split("/").filter((v) => v !== "");
-    let currentDirectory: VfsEntry = this.getWd();
+    const currentDirectory: VfsEntry = this.getWd();
 
     segments.forEach((segment) => {
       if (!currentDirectory.entries) {
@@ -95,7 +95,7 @@ export class Vfs {
   getWd(): VfsEntry {
     let currentDirectory: VfsEntry = this.root;
 
-    for (let idx of this.wd) {
+    for (const idx of this.wd) {
       if (!currentDirectory.entries) {
         throw new VfsError("Invalid working directory state");
       }
