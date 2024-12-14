@@ -1,4 +1,4 @@
 export * from "./terminal/terminal.js";
-export * from "./terminal/command.js"
+export * from "./terminal/command.js";
 
-import "./starter.css"
+import "./starter.css";

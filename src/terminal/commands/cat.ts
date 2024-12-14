@@ -1,4 +1,4 @@
-import { Command } from "../command.js"
+import { Command } from "../command.js";
 
 export const Cat: Command = {
   name: "cat",
@@ -6,13 +6,13 @@ export const Cat: Command = {
   type: "synchronous",
   run: (t, a) => {
     if (!a[0]) {
-      throw new Error("Invalid arguments, please provide a file")
+      throw new Error("Invalid arguments, please provide a file");
     }
     try {
       const content = t.vfs.readFile(a[0]);
-      t.print(content)
+      t.print(content);
     } catch (e) {
-      throw e
+      throw e;
     }
-  }
-}
+  },
+};

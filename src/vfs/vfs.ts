@@ -108,12 +108,12 @@ export class Vfs {
   }
 
   readFile(name: string): string {
-    const file = this._resolvePath(name)
+    const file = this._resolvePath(name);
     if (!file) {
-      throw new VfsError("File does not exist")
+      throw new VfsError("File does not exist");
     }
     if (!file.fileContent) {
-      throw new VfsError("File has no content")
+      throw new VfsError("File has no content");
     }
     return atob(file.fileContent);
   }
@@ -123,13 +123,13 @@ export class Vfs {
     const oldWd = this.wd;
     if (normalized.length > 1) {
       normalized.slice(1).forEach((s) => {
-        this.cwd(s)
-      })
+        this.cwd(s);
+      });
     }
-    const wd = this.getWd()
+    const wd = this.getWd();
     if (wd.entries) {
-      const path = normalized[normalized.length - 1]
-      return wd.entries[path]
+      const path = normalized[normalized.length - 1];
+      return wd.entries[path];
     }
 
     this.wd = oldWd;

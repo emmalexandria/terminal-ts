@@ -3,29 +3,29 @@ import { Vfs } from "../vfs/vfs.js";
 import { HelpStartup } from "./commands/help.js";
 
 export interface ColorInterface {
-  ansi16?: Ansi16,
-  rgb?: Rgb
+  ansi16?: Ansi16;
+  rgb?: Rgb;
 }
 
 export class Color {
-  ansi16?: Ansi16
-  rgb?: Rgb
+  ansi16?: Ansi16;
+  rgb?: Rgb;
 
   constructor(color?: ColorInterface) {
     if (!color) {
-      this.ansi16 = Ansi16.DEFAULT
-      return
+      this.ansi16 = Ansi16.DEFAULT;
+      return;
     }
-    let { ansi16, rgb } = color
+    const { ansi16, rgb } = color;
     if (rgb) {
-      this.rgb = rgb
-      return
+      this.rgb = rgb;
+      return;
     }
     if (ansi16) {
-      this.ansi16 = ansi16
-      return
+      this.ansi16 = ansi16;
+      return;
     }
-    this.ansi16 = Ansi16.DEFAULT
+    this.ansi16 = Ansi16.DEFAULT;
   }
 }
 
@@ -50,11 +50,10 @@ export enum Ansi16 {
 }
 
 export interface Rgb {
-  r: number,
-  g: number,
-  b: number
+  r: number;
+  g: number;
+  b: number;
 }
-
 
 export enum Attribute {
   BOLD = "bold",
@@ -65,8 +64,8 @@ export enum Attribute {
 }
 
 export interface TerminalLink {
-  href: string,
-  target: "_blank" | "_self"
+  href: string;
+  target: "_blank" | "_self";
 }
 
 export interface TerminalText {
@@ -74,7 +73,7 @@ export interface TerminalText {
   fg: Color;
   bg: Color;
   attributes: Attribute[];
-  link?: TerminalLink
+  link?: TerminalLink;
 }
 
 export type OutputCallback = (line: HTMLSpanElement) => void;
@@ -83,7 +82,7 @@ export type PromptUpdateCallback = (update: PromptUpdate) => void;
 export type PromptContentCallback = () => string;
 
 interface PromptUpdate {
-  content?: string
+  content?: string;
   currentCommand?: string;
   vfs?: Vfs;
   lastCommandSuccess?: boolean;
@@ -93,7 +92,7 @@ export class Terminal {
   commands: Command[];
   startupCommand?: Command;
   history: string[];
-  historyIdx: number
+  historyIdx: number;
   vfs: Vfs;
   outputCallback: OutputCallback;
   promptUpdateCallback: PromptUpdateCallback;
@@ -105,7 +104,7 @@ export class Terminal {
     outputCallback: OutputCallback,
     promptCallback: PromptUpdateCallback,
     promptContentCallback: PromptContentCallback,
-    startupCommand?: Command
+    startupCommand?: Command,
   ) {
     this.outputCallback = outputCallback;
     this.promptUpdateCallback = promptCallback;
@@ -116,19 +115,19 @@ export class Terminal {
     this.commands = [];
     this.lines = [];
     if (!startupCommand) {
-      startupCommand = HelpStartup
+      startupCommand = HelpStartup;
     }
-    this.startupCommand = startupCommand
+    this.startupCommand = startupCommand;
 
-    this._runcommand(startupCommand, [])
+    this._runcommand(startupCommand, []);
   }
 
   print(input: string) {
-    const lines = input.split('\n');
+    const lines = input.split("\n");
     lines.forEach((l) => {
-      this.lines.push([makeDefaultText(l)])
+      this.lines.push([makeDefaultText(l)]);
       this.outputCallback(renderTerminalTextLine([makeDefaultText(l)]));
-    })
+    });
   }
 
   printColoredLine(text: TerminalText) {
@@ -138,7 +137,7 @@ export class Terminal {
 
   printColored(text: TerminalText[]) {
     this.lines.push(text);
-    this.outputCallback(renderTerminalTextLine(text))
+    this.outputCallback(renderTerminalTextLine(text));
   }
 
   input(input: string) {
@@ -148,7 +147,7 @@ export class Terminal {
       this.print(this.promptContentCallback());
       const result = this._runcommand(command, parts.slice(1));
       if (result) {
-        this.history.push(input)
+        this.history.push(input);
       }
       this.promptUpdateCallback({
         vfs: this.vfs,
@@ -163,8 +162,6 @@ export class Terminal {
         attributes: [],
       });
     }
-
-
   }
 
   _runcommand(command: Command, args: string[]): boolean {
@@ -172,12 +169,14 @@ export class Terminal {
       command.run(this, args);
     } catch (e) {
       const error = e as Error;
-      this.printColoredLine(createTerminalText(error.message, new Color({ ansi16: Ansi16.RED })))
-      this.promptUpdateCallback({ lastCommandSuccess: false })
-      return false
+      this.printColoredLine(
+        createTerminalText(error.message, new Color({ ansi16: Ansi16.RED })),
+      );
+      this.promptUpdateCallback({ lastCommandSuccess: false });
+      return false;
     }
-    this.promptUpdateCallback({ lastCommandSuccess: true })
-    return true
+    this.promptUpdateCallback({ lastCommandSuccess: true });
+    return true;
   }
 }
 
@@ -191,43 +190,50 @@ function makeDefaultText(input: string): TerminalText {
   return output;
 }
 
-export function createTerminalText(text: string, fg?: Color, bg?: Color, attributes?: Attribute[]): TerminalText {
+export function createTerminalText(
+  text: string,
+  fg?: Color,
+  bg?: Color,
+  attributes?: Attribute[],
+): TerminalText {
   return {
     text,
     fg: fg ?? new Color(),
     bg: bg ?? new Color(),
-    attributes: attributes ?? []
-  }
+    attributes: attributes ?? [],
+  };
 }
 
 export function renderTerminalTextLine(text: TerminalText[]): HTMLSpanElement {
   const span: HTMLSpanElement = document.createElement("span");
   span.style.display = "block";
-  span.classList.add("terminal-line")
+  span.classList.add("terminal-line");
   span.style.whiteSpace = "pre-wrap";
   text.forEach((t) => {
     const paragraph = renderTerminalText(t);
-    span.appendChild(paragraph)
-  })
+    span.appendChild(paragraph);
+  });
 
-  return span
+  return span;
 }
 
-function renderTerminalText(text: TerminalText): HTMLParagraphElement | HTMLAnchorElement {
+function renderTerminalText(
+  text: TerminalText,
+): HTMLParagraphElement | HTMLAnchorElement {
   let element: HTMLParagraphElement | HTMLAnchorElement;
   if (text.link) {
     element = document.createElement("a") as HTMLAnchorElement;
     element.href = text.link.href;
     element.target = text.link.target;
   } else {
-    element = document.createElement("p") as HTMLParagraphElement
+    element = document.createElement("p") as HTMLParagraphElement;
   }
   element.style.display = "inline-block";
   element.style.margin = "0";
   element.style.whiteSpace = "pre-wrap";
   element.textContent = text.text;
-  colorElement(text.fg, element, false)
-  colorElement(text.bg, element, true)
+  colorElement(text.fg, element, false);
+  colorElement(text.bg, element, true);
   text.attributes.forEach((a) => {
     element.classList.add(a);
   });
@@ -236,19 +242,19 @@ function renderTerminalText(text: TerminalText): HTMLParagraphElement | HTMLAnch
 
 function colorElement(color: Color, el: HTMLElement, background?: boolean) {
   if (!background) {
-    background = false
+    background = false;
   }
   if (color.rgb) {
-    const colorString = `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`
+    const colorString = `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`;
     if (background) {
       el.style.backgroundColor = colorString;
     } else {
       el.style.color = colorString;
     }
-    return
+    return;
   }
   if (color.ansi16) {
-    el.classList.add(colorToClassName(color.ansi16, background))
+    el.classList.add(colorToClassName(color.ansi16, background));
   }
 }
 

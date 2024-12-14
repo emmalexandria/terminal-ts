@@ -6,15 +6,15 @@ export const Help: Command = {
   description: "Print a list of all available commands",
   run: (t, a) => {
     t.commands.forEach((c) => {
-      t.print(`${c.name} - ${c.description}`)
-    })
-  }
-}
+      t.print(`${c.name} - ${c.description}`);
+    });
+  },
+};
 
 export const HelpStartup: Command = {
   name: "help-startup",
   type: "synchronous",
   run: (t, a) => {
-    t.print("Type help for a list of commands")
-  }
-}
+    t.print("Type help for a list of commands");
+  },
+};
