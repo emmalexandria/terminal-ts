@@ -11,6 +11,6 @@ test("Get working directory", async () => {
 test("Change working directory", async () => {
   const Fs = await buildVFS("src/vfs")
   Fs.cwd("server")
-
+  expect(Fs.root.entries).toBeDefined()
   expect(Fs.getWd()).toEqual(Fs.root.entries?.server)
 })

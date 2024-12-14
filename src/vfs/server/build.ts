@@ -48,21 +48,29 @@ const walkDir = async (dir: string): Promise<VfsEntry> => {
   return root;
 };
 
-const makeDirectoryRelative = (dir: VfsEntry) => {
-  dir.path = ".";
-  const makeChildrenRelative = (currentDir: VfsEntry) => {
+export const makeDirectoryRelative = (dir: VfsEntry) => {
+  if (!dir.entries) {
+    return
+  }
+
+  const makeChildRelative = (currentDir: VfsEntry) => {
     if (!currentDir.entries) {
-      return new FsError("Entry is not directory")
+      currentDir.path = path.relative(dir.path, currentDir.path)
+      return
     }
-    for (const key of Object.keys(currentDir.entries)) {
-      currentDir.entries[key].path = path.relative(
-        currentDir.path,
-        currentDir.entries[key].path,
-      );
-    }
+
+    Object.values(currentDir.entries).forEach((child) => {
+      makeChildRelative(child);
+    })
+
+    currentDir.path = path.relative(dir.path, currentDir.path)
   };
 
-  makeChildrenRelative(dir);
+  Object.values(dir.entries).forEach((child) => {
+    makeChildRelative(child);
+  })
+
+  dir.path = ""
 };
 
 export const vfsDirectoryFromPath = async (

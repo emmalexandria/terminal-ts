@@ -1,6 +1,6 @@
 {
   "name": "terminal-ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A typed library offering a full suite of tools for building fake terminals in the web, from a virtual filesystem to running both real and fake commands.",
   "main": "dist/node/index.js",
   "scripts": {
@@ -19,6 +19,14 @@
     "./server": {
       "require": "./dist/server.js",
       "import": "./dist/server.mjs"
+    },
+    "./handlers": {
+      "require": "./dist/handlers.js",
+      "import": "./dist/handlers.mjs"
+    },
+    "./commands": {
+      "require": "./dist/commands.js",
+      "import": "./dist/commands.mjs"
     }
   },
   "keywords": [
