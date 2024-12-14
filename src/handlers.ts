@@ -1,1 +1,1 @@
-export * from "./terminal/handlers/index.js"
+export * from "./terminal/handlers/index.js";

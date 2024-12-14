@@ -8,7 +8,6 @@ interface Timestamps {
   accessedAt: Timestamp;
 }
 
-
 export type ServerEntry = {
   serverPath?: string;
 };
@@ -26,13 +25,12 @@ export interface VfsEntry {
   size: number;
   times: Timestamps;
   serverEntry?: ServerEntry;
-  entries?: EntryChildren
-  fileContent?: Buffer
+  entries?: EntryChildren;
+  fileContent?: Buffer;
 }
 
 /// Represents a path through the path of children one must go through to access the file
-export type VirtualPath = number[]
-
+export type VirtualPath = number[];
 
 export const FSRoot: VfsEntry = {
   name: "",
@@ -49,68 +47,63 @@ export const FSRoot: VfsEntry = {
 
 export class VfsError extends Error {
   constructor(message: string) {
-    super(message)
-    this.name = "FsError"
+    super(message);
+    this.name = "FsError";
   }
 }
 
 export class Vfs {
-  root: VfsEntry
-  wd: VirtualPath
+  root: VfsEntry;
+  wd: VirtualPath;
 
   constructor(root: VfsEntry) {
-    this.root = root
-    this.wd = []
+    this.root = root;
+    this.wd = [];
   }
 
   cwd(cdPath: string): VfsError | void {
-    const normalized = path.normalize(cdPath)
-    const segments = normalized.split("/").filter((v) => v !== "")
-    let currentDirectory: VfsEntry = this.getWd()
+    const normalized = path.normalize(cdPath);
+    const segments = normalized.split("/").filter((v) => v !== "");
+    let currentDirectory: VfsEntry = this.getWd();
 
     segments.forEach((segment) => {
       if (!currentDirectory.entries) {
-        throw new VfsError("Invalid path")
+        throw new VfsError("Invalid path");
       }
       if (segment === "..") {
         if (this.wd.length >= 1) {
-          this.wd.pop()
+          this.wd.pop();
         }
-        return
+        return;
       }
       if (segment == ".") {
-        return
+        return;
       }
 
       const entry = Object.keys(currentDirectory.entries).findIndex((val) => {
-        return val === segment
+        return val === segment;
       });
 
       if (entry == -1) {
-        throw new VfsError("Invalid path")
+        throw new VfsError("Invalid path");
       }
 
-      this.wd.push(entry)
-    })
+      this.wd.push(entry);
+    });
   }
 
   getWd(): VfsEntry {
-    let currentDirectory: VfsEntry = this.root
+    let currentDirectory: VfsEntry = this.root;
 
     for (let idx of this.wd) {
       if (!currentDirectory.entries) {
-        throw new VfsError("Invalid working directory state")
+        throw new VfsError("Invalid working directory state");
       }
 
-      const childArray = Array.from(Object.values(currentDirectory.entries))
-      currentDirectory = childArray[idx]
+      const childArray = Array.from(Object.values(currentDirectory.entries));
+      currentDirectory = childArray[idx];
     }
 
-    return currentDirectory
+    return currentDirectory;
   }
 }
-
-
-
-
-

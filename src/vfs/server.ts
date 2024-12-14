@@ -1,7 +1,4 @@
-import {
-  EntryType,
-  VfsEntry,
-} from "vfs/vfs.js";
+import { EntryType, VfsEntry } from "vfs/vfs.js";
 import path, { relative } from "path";
 import fs, { Dirent, Stats } from "fs";
 import { VfsError, Vfs } from "./vfs.js";
@@ -9,7 +6,7 @@ import { VfsError, Vfs } from "./vfs.js";
 export const buildVfsRoot = async (root: string): Promise<VfsEntry> => {
   const VFS = await walkDir(path.resolve(root));
   makeDirectoryRelative(VFS);
-  return VFS
+  return VFS;
 };
 
 const walkDir = async (dir: string): Promise<VfsEntry> => {
@@ -50,27 +47,27 @@ const walkDir = async (dir: string): Promise<VfsEntry> => {
 
 export const makeDirectoryRelative = (dir: VfsEntry) => {
   if (!dir.entries) {
-    return
+    return;
   }
 
   const makeChildRelative = (currentDir: VfsEntry) => {
     if (!currentDir.entries) {
-      currentDir.path = path.relative(dir.path, currentDir.path)
-      return
+      currentDir.path = path.relative(dir.path, currentDir.path);
+      return;
     }
 
     Object.values(currentDir.entries).forEach((child) => {
       makeChildRelative(child);
-    })
+    });
 
-    currentDir.path = path.relative(dir.path, currentDir.path)
+    currentDir.path = path.relative(dir.path, currentDir.path);
   };
 
   Object.values(dir.entries).forEach((child) => {
     makeChildRelative(child);
-  })
+  });
 
-  dir.path = ""
+  dir.path = "";
 };
 
 export const vfsDirectoryFromPath = async (

@@ -1,32 +1,39 @@
-import { Terminal } from "terminal/terminal"
-import { getCursorPosition, setCursorPosition } from "./util"
+import { Terminal } from "terminal/terminal";
+import { getCursorPosition, setCursorPosition } from "./util";
 
-export function keyboardInputHandler(ev: KeyboardEvent, terminal: Terminal, input: HTMLElement) {
-  ev.preventDefault()
+export function keyboardInputHandler(
+  ev: KeyboardEvent,
+  terminal: Terminal,
+  input: HTMLElement,
+) {
+  ev.preventDefault();
   if (!handleSpecialKeys(ev, terminal, input)) {
-    input.textContent += ev.key
-    let position = getCursorPosition(input)
+    input.textContent += ev.key;
+    let position = getCursorPosition(input);
     if (!position) {
-      position = 0
+      position = 0;
     }
 
-    setCursorPosition(input, position + 1)
-
+    setCursorPosition(input, position + 1);
   }
 }
 
-function handleSpecialKeys(ev: KeyboardEvent, terminal: Terminal, input: HTMLElement): boolean {
+function handleSpecialKeys(
+  ev: KeyboardEvent,
+  terminal: Terminal,
+  input: HTMLElement,
+): boolean {
   switch (ev.key) {
     case "Enter":
-      console.log("Hello")
+      console.log("Hello");
       if (input.textContent) {
-        terminal.input(input.textContent)
+        terminal.input(input.textContent);
       }
-      input.textContent = ""
-      setCursorPosition(input, 0)
-      return true
-      break
+      input.textContent = "";
+      setCursorPosition(input, 0);
+      return true;
+      break;
   }
 
-  return false
+  return false;
 }

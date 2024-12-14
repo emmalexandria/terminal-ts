@@ -1,6 +1,6 @@
-import { test, expect } from "vitest"
-import { buildVfsRoot, makeDirectoryRelative } from "./server"
-import { VfsEntry } from "./vfs"
+import { test, expect } from "vitest";
+import { buildVfsRoot, makeDirectoryRelative } from "./server";
+import { VfsEntry } from "./vfs";
 
 test("Make directory paths relative", async () => {
   const vfs: VfsEntry = {
@@ -11,10 +11,10 @@ test("Make directory paths relative", async () => {
     times: {
       createdAt: new Date(),
       modifiedAt: new Date(),
-      accessedAt: new Date()
+      accessedAt: new Date(),
     },
     entries: {
-      "vfs": {
+      vfs: {
         name: "vfs",
         path: "users/emma/root/vfs",
         type: "directory",
@@ -22,7 +22,7 @@ test("Make directory paths relative", async () => {
         times: {
           createdAt: new Date(),
           modifiedAt: new Date(),
-          accessedAt: new Date()
+          accessedAt: new Date(),
         },
         entries: {
           "test.txt": {
@@ -33,14 +33,13 @@ test("Make directory paths relative", async () => {
             times: {
               createdAt: new Date(),
               modifiedAt: new Date(),
-              accessedAt: new Date()
-            }
-          }
-        }
-      }
-
-    }
-  }
+              accessedAt: new Date(),
+            },
+          },
+        },
+      },
+    },
+  };
   const expectedResult: VfsEntry = {
     name: "root",
     path: "",
@@ -49,10 +48,10 @@ test("Make directory paths relative", async () => {
     times: {
       createdAt: new Date(),
       modifiedAt: new Date(),
-      accessedAt: new Date()
+      accessedAt: new Date(),
     },
     entries: {
-      "vfs": {
+      vfs: {
         name: "vfs",
         path: "vfs",
         type: "directory",
@@ -60,7 +59,7 @@ test("Make directory paths relative", async () => {
         times: {
           createdAt: new Date(),
           modifiedAt: new Date(),
-          accessedAt: new Date()
+          accessedAt: new Date(),
         },
         entries: {
           "test.txt": {
@@ -71,15 +70,14 @@ test("Make directory paths relative", async () => {
             times: {
               createdAt: new Date(),
               modifiedAt: new Date(),
-              accessedAt: new Date()
-            }
-          }
-        }
-      }
-    }
-  }
+              accessedAt: new Date(),
+            },
+          },
+        },
+      },
+    },
+  };
 
-
-  makeDirectoryRelative(vfs)
-  expect(vfs).toEqual(expectedResult)
-})
+  makeDirectoryRelative(vfs);
+  expect(vfs).toEqual(expectedResult);
+});

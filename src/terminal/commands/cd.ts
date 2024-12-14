@@ -5,14 +5,13 @@ export const Cd: Command = {
   type: "synchronous",
   run: (t, a) => {
     try {
-      let path = a[0]
+      let path = a[0];
       if (!path) {
-        path = "."
+        path = ".";
       }
       t.vfs.cwd(path);
     } catch (e) {
-      throw e
+      throw e;
     }
-  }
-
-}
+  },
+};
