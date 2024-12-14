@@ -2,7 +2,8 @@
 # terminal-ts
 
 `terminal-ts` is a library written in Typescript (but built to Javascript with `.dts` files) for creating fake terminal user interfaces on the web. 
-To see a minimal example of its use, visit the [website](https://terminalts.emmalexandria.dev).
+
+**N.B: `terminal-ts` is currently in the very early stages. Every update will likely be breaking, and it is not yet intended for use in any form of anything approaching production.**
 
 ## Features
 - Generates a virtual file system from a real file system on disk for your users to interact with
