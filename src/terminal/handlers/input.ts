@@ -1,5 +1,5 @@
-import { Terminal } from "terminal/terminal";
-import { getCursorPosition, setCursorPosition } from "./util";
+import { Terminal } from "../terminal.js";
+import { getCursorPosition, setCursorPosition } from "./util.js";
 import { boolUndefinedDefault } from "./util.js";
 
 interface Binding {

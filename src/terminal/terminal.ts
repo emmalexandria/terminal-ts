@@ -217,7 +217,7 @@ export function renderTerminalTextLine(text: TerminalText[]): HTMLSpanElement {
   return span;
 }
 
-function renderTerminalText(
+export function renderTerminalText(
   text: TerminalText,
 ): HTMLParagraphElement | HTMLAnchorElement {
   let element: HTMLParagraphElement | HTMLAnchorElement;
