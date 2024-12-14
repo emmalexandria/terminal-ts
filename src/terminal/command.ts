@@ -5,6 +5,7 @@ export type CommandType = "synchronous" | "continuous";
 export interface Command {
   name: string;
   description?: string;
+  hidden?: boolean;
   type: CommandType;
   run: (terminal: Terminal, args: string[]) => void;
 }

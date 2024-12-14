@@ -1,23 +1,31 @@
 import { Command } from "./command.js";
 import { Vfs } from "../vfs/vfs.js";
+import { HelpStartup } from "./commands/help.js";
 
-enum OutputColor {
+export enum OutputColor {
   BLACK = "black",
+  BRIGHTBLACK = "bright-black",
   WHITE = "white",
+  BRIGHTWHITE = "bright-white",
   RED = "red",
+  BRIGHTRED = "bright-red",
   GREEN = "green",
+  BRIGHTGREEN = "bright-green",
   YELLOW = "yellow",
+  BRIGHTYELLOW = "bright-yellow",
   BLUE = "blue",
+  BRIGHTBLUE = "bright-blue",
   MAGENTA = "magenta",
+  BRIGHTMAGENTA = "bright-magenta",
   CYAN = "cyan",
+  BRIGHTCYAN = "bright-cyan",
   DEFAULT = "default",
 }
 
-enum OutputAttributes {
+export enum OutputAttributes {
   BOLD = "bold",
   ITALIC = "italic",
   DIM = "dim",
-  BRIGHT = "bright",
   UNDERLINE = "underline",
   BLINKING = "blink",
 }
@@ -29,7 +37,7 @@ export interface TerminalText {
   attributes: OutputAttributes[];
 }
 
-export type OutputCallback = (output: HTMLParagraphElement) => void;
+export type OutputCallback = (line: HTMLSpanElement) => void;
 
 export type PromptUpdateCallback = (update: PromptUpdate) => void;
 export type PromptContentCallback = () => string;
@@ -42,6 +50,7 @@ interface PromptUpdate {
 
 export class Terminal {
   commands: Command[];
+  startupCommand?: Command;
   vfs: Vfs;
   outputCallback: OutputCallback;
   promptUpdateCallback: PromptUpdateCallback;
@@ -53,6 +62,7 @@ export class Terminal {
     outputCallback: OutputCallback,
     promptCallback: PromptUpdateCallback,
     promptContentCallback: PromptContentCallback,
+    startupCommand?: Command
   ) {
     this.outputCallback = outputCallback;
     this.promptUpdateCallback = promptCallback;
@@ -60,21 +70,30 @@ export class Terminal {
     this.vfs = vfs;
     this.commands = [];
     this.lines = [];
+    if (!startupCommand) {
+      startupCommand = HelpStartup
+    }
+    this.startupCommand = startupCommand
+
+    this._runcommand(startupCommand, [])
   }
 
   print(input: string) {
     const lines = input.split('\n');
     lines.forEach((l) => {
       this.lines.push([makeDefaultText(l)])
-      this.outputCallback(renderTerminalText(makeDefaultText(l)));
+      this.outputCallback(renderTerminalTextLine([makeDefaultText(l)]));
     })
-    this.promptUpdateCallback({ vfs: this.vfs });
   }
 
-  printColored(text: TerminalText) {
+  printColoredLine(text: TerminalText) {
     this.lines.push([text]);
-    this.outputCallback(renderTerminalText(text));
-    this.promptUpdateCallback({ vfs: this.vfs });
+    this.outputCallback(renderTerminalTextLine([text]));
+  }
+
+  printColored(text: TerminalText[]) {
+    this.lines.push(text);
+    this.outputCallback(renderTerminalTextLine(text))
   }
 
   input(input: string) {
@@ -89,7 +108,7 @@ export class Terminal {
       });
       return;
     } else {
-      this.printColored({
+      this.printColoredLine({
         text: `No command found for ${input}`,
         fg: OutputColor.RED,
         bg: OutputColor.DEFAULT,
@@ -103,7 +122,7 @@ export class Terminal {
       command.run(this, args);
     } catch (e) {
       const error = e as Error;
-      this.printColored({ text: error.message, fg: OutputColor.RED, bg: OutputColor.DEFAULT, attributes: [] })
+      this.printColoredLine({ text: error.message, fg: OutputColor.RED, bg: OutputColor.DEFAULT, attributes: [] })
     }
   }
 }
@@ -118,8 +137,24 @@ function makeDefaultText(input: string): TerminalText {
   return output;
 }
 
-export function renderTerminalText(text: TerminalText): HTMLParagraphElement {
+export function renderTerminalTextLine(text: TerminalText[]): HTMLSpanElement {
+  const span: HTMLSpanElement = document.createElement("span");
+  span.style.display = "block";
+  span.classList.add("terminal-line")
+  span.style.whiteSpace = "pre";
+  text.forEach((t) => {
+    const paragraph = renderTerminalText(t);
+    span.appendChild(paragraph)
+  })
+
+  return span
+}
+
+function renderTerminalText(text: TerminalText): HTMLParagraphElement {
   const paragraph: HTMLParagraphElement = document.createElement("p");
+  paragraph.style.display = "inline-block";
+  paragraph.style.margin = "0";
+  paragraph.style.whiteSpace = "pre";
   paragraph.textContent = text.text;
   paragraph.classList.add(colorToClassName(text.fg, false));
   paragraph.classList.add(colorToClassName(text.bg, true));
@@ -127,12 +162,13 @@ export function renderTerminalText(text: TerminalText): HTMLParagraphElement {
     paragraph.classList.add(a);
   });
   return paragraph;
+
 }
 
 function colorToClassName(color: OutputColor, background?: boolean): string {
   if (!background) {
     background = false;
   }
-  const retColor: string = `${background ? "bg" : "fg"}${color}`;
+  const retColor: string = `${background ? "bg" : "fg"}-${color}`;
   return retColor;
 }

@@ -10,3 +10,11 @@ export const Help: Command = {
     })
   }
 }
+
+export const HelpStartup: Command = {
+  name: "help-startup",
+  type: "synchronous",
+  run: (t, a) => {
+    t.print("Type help for a list of commands")
+  }
+}
